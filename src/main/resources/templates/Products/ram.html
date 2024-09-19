@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>RAM Search Result</title>
+    <!-- ... 기존의 CSS 및 JavaScript 라이브러리 추가 ... -->
+    <link rel="stylesheet" href="/list.css">
+</head>
+<body>
+
+<nav th:replace="~{main_up :: main_upFragment}"></nav>
+<nav th:replace="~{main_nav :: main_navFragment}"></nav>
+
+<div class="container">
+    <div id="filter-body" class="filter-container">
+        <div class="filter-group">
+            <h4>제조사</h4>
+            <div class="filter-options" id="maker-options">
+                <a class="brand-option" value="삼성전자">삼성전자</a>
+                <a class="brand-option" value="G.SKILL">G.SKILL</a>
+                <a class="brand-option" value="마이크론">마이크론</a>
+                <a class="brand-option" value="TeamGroup">TeamGroup</a>
+                <a class="brand-option" value="SK하이닉스">SK하이닉스</a>
+                <a class="brand-option" value="GeIL">GeIL</a>
+                <a class="brand-option" value="GeIL">GeIL</a>
+                <a class="brand-option" value="ESSENCORE">ESSENCORE</a>
+                <a class="brand-option" value="ADATA">ADATA</a>
+
+            </div>
+        </div>
+        <div class="filter-group">
+            <h4>제품 분류</h4>
+            <div class="filter-options" id="print-options">
+                <a class="brand-option" value="DDR5">DDR5</a>
+                <a class="brand-option" value="DDR4">DDR4</a>
+                <a class="brand-option" value="DDR3">DDR3</a>
+                <a class="brand-option" value="DDR2">DDR2</a>
+                <a class="brand-option" value="DDR">DDR</a>
+            </div>
+        </div>
+        <div class="filter-group">
+            <h4>가격</h4>
+            <div class="filter-options" id="price-options">
+                <a class="price-option" value="10만원 미만">10만원 미만</a>
+                <a class="price-option" value="100000~200000">100,000 ~ 200,000</a>
+                <a class="price-option" value="200000~400000">200,000 ~ 400,000</a>
+                <a class="price-option" value="400000~">400,000 이상</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+    <h1>RAM Search Result</h1>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Title</th>
+            <th>관심</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${productList}">
+            <td th:text="${product.id}"></td>
+            <td>
+                <a th:href="@{${product.link}}" target="_blank" rel="noopener noreferrer">
+                    <img th:src="@{${product.image}}" width="100" th:alt="${product.title}"/>
+                </a>
+            </td>
+            <td th:text="${#numbers.formatInteger(product.lprice, 0, 'COMMA')} + '원'"></td>
+            <td th:text="${#strings.replace((#strings.replace(product.title, '</b>', '')), '<b>', '')}"></td>
+            <td>
+                <button class="add-to-cart-btn"><img src="/cart.jpg" width="75" height="75"/></button>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<button onclick="topFunction()" id="topBtn" title="Go to top">Top</button>
+
+<script th:inline="javascript">
+
+    const addToCartBtns = document.querySelectorAll('.add-to-cart-btn');
+    addToCartBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            alert('상품이 관심목록에 추가되었습니다!');
+        });
+    });
+
+    // 버튼 클릭 시 맨 위로 스크롤 이동
+    function topFunction() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+
+    // 스크롤 위치가 일정 값 이상일 때 버튼 보이기
+    window.onscroll = function() {scrollFunction()};
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                document.getElementById("topBtn").style.display = "block";
+        } else {
+                document.getElementById("topBtn").style.display = "none";
+        }
+    }
+
+</script>
+</body>
+</html>

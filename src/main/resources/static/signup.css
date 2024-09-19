@@ -1,0 +1,43 @@
+html {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    
+
+}
+body {
+    width: 75%;
+    border: 1px solid black;
+}
+h1 {
+    text-align: center;
+    font-weight: 700;
+}
+
+.form-control{
+    background-color:aliceblue;
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 30px;
+    width: 260px;
+}
+.form-label{
+    font-size: 80%;
+    position: relative;
+}
+.sign_up{
+    width: 300px;
+    height: 30px;
+    background: greenyellow;
+    border: 1px solid green;
+    border-radius: 5px;
+    transition: 0.25s;
+}
+.sign_up:active{
+    background: green;
+}
+div{
+    padding-top: 3px;
+    padding-bottom: 8px;
+    text-align: center;
+}

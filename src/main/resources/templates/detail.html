@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table>
+  <thead>
+  <tr>
+    <th>Field</th>
+    <th>Value</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>프로그램 코드</td>
+    <td th:text="${detail.progrmRegistNo}"></td>
+  </tr>
+  <tr>
+    <td>시작시간</td>
+    <td th:text="${detail.actBeginTm}"></td>
+  </tr>
+  <tr>
+    <td>끝나는시간</td>
+    <td th:text="${detail.actEndTm}"></td>
+  </tr>
+  <tr>
+    <td>봉사 장소</td>
+    <td th:text="${detail.actPlace}"></td>
+  </tr>
+  <tr>
+    <td>성인가능여부</td>
+    <td th:text="${detail.adultPosblAt}"></td>
+  </tr>
+  <tr>
+    <td>신청인원수</td>
+    <td th:text="${detail.appTotal}"></td>
+  </tr>
+  <tr>
+    <td>좌표</td>
+    <td th:text="${detail.areaAddress1}"></td>
+  </tr>
+  <tr>
+    <td>좌표</td>
+    <td th:text="${detail.areaLalo1}"></td>
+  </tr>
+  <tr>
+    <td>이메일</td>
+    <td th:text="${detail.email}"></td>
+  </tr>
+  <tr>
+    <td>가족가능여부</td>
+    <td th:text="${detail.familyPosblAt}"></td>
+  </tr>
+  <tr>
+    <td>팩스번호</td>
+    <td th:text="${detail.fxnum}"></td>
+  </tr>
+  <tr>
+    <td>단체가능여부</td>
+    <td th:text="${detail.grpPosblAt}"></td>
+  </tr>
+  <tr>
+    <td>미성년자 가능여부</td>
+    <td th:text="${detail.yngbgsPosblAt}"></td>
+  </tr>
+  <tr>
+    <td>시군구 코드</td>
+    <td th:text="${detail.gugunCd}"></td>
+  </tr>
+  <tr>
+    <td>시도 코드</td>
+    <td th:text="${detail.sidoCd}"></td>
+  </tr>
+  <tr>
+    <td>모집기관</td>
+    <td th:text="${detail.mnnstNm}"></td>
+  </tr>
+  <tr>
+    <td>등록기관</td>
+    <td th:text="${detail.nanmmbyNm}"></td>
+  </tr>
+  <tr>
+    <td>담당자명</td>
+    <td th:text="${detail.nanmmbyNmAdmn}"></td>
+  </tr>
+  <tr>
+    <td>모집시작일</td>
+    <td th:text="${detail.noticeBgnde}"></td>
+  </tr>
+  <tr>
+    <td>모집종료일</td>
+    <td th:text="${detail.noticeEndde}"></td>
+  </tr>
+  <tr>
+    <td>pbsvntPosblAt</td>
+    <td th:text="${detail.pbsvntPosblAt}"></td>
+  </tr>
+  <tr>
+    <td>담당자 주소</td>
+    <td th:text="${detail.postAdres}"></td>
+  </tr>
+  <tr>
+    <td>봉사시작일자</td>
+    <td th:text="${detail.progrmBgnde}"></td>
+  </tr>
+  <tr>
+    <td>봉사종료일자</td>
+    <td th:text="${detail.progrmEndde}"></td>
+  </tr>
+  <tr>
+    <td>봉사제목</td>
+    <td th:text="${detail.progrmSj}"></td>
+  </tr>
+  <tr>
+    <td>모집상태</td>
+    <td th:text="${detail.progrmSttusSe}"></td>
+  </tr>
+  <tr>
+    <td>모집인원</td>
+    <td th:text="${detail.rcritNmpr}"></td>
+  </tr>
+  <tr>
+    <td>봉사분야</td>
+    <td th:text="${detail.srvcClCode}"></td>
+  </tr>
+  <tr>
+    <td>전화번호</td>
+    <td th:text="${detail.telno}"></td>
+  </tr>
+  </tbody>
+</table>
+
+<div>
+  <h2>내용</h2>
+  <p th:text="${detail.progrmCn}"></p>
+</div>
+
+
+</body>
+</html>

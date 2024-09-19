@@ -1,0 +1,219 @@
+<nav th:fragment="map">
+<html lang="en">
+<body>
+<div id="map-container">
+<div id="map" style="width: 50%; height: 600px;"></div>
+<!--<div id="distance-container"></div>-->
+</div>
+
+<style>
+    #map-container{
+        display: flex;
+        justify-content: center;
+    }
+</style>
+
+
+<script>
+    var map;
+    var markers = [];
+
+    kakao.maps.load(function () {
+        var geocoder = new kakao.maps.services.Geocoder();
+        map = new kakao.maps.Map(document.getElementById("map"), {
+            center: new kakao.maps.LatLng(37.566826, 126.9786567),
+            level: 3,
+        });
+
+        var searchBtn = document.getElementById("search-btn");
+        searchBtn.addEventListener("click", function () {
+            var searchType = document.getElementById("search-type").value;
+            var input = document.getElementById("input").value;
+
+            if (searchType === "address") {
+                // 도로명 주소로 검색
+                if (input) {
+                    geocoder.addressSearch(input, function (result, status) {
+                        if (status === kakao.maps.services.Status.OK) {
+                            var latitude = result[0].y; // 위도
+                            var longitude = result[0].x; // 경도
+                            addMarker(latitude, longitude);
+                        } else {
+                            alert("해당하는 주소가 없습니다.");
+                        }
+                    });
+                } else {
+                    alert("검색어를 입력해주세요.");
+                }
+            } else if (searchType === "coordinate") {
+                // 위도 및 경도로 검색
+                var coordinates = input.split(",");
+                if (coordinates.length === 2) {
+                    var latitude = parseFloat(coordinates[0]);
+                    var longitude = parseFloat(coordinates[1]);
+                    addMarker(latitude, longitude);
+                } else {
+                    alert("위도와 경도를 콤마(,)로 구분하여 입력해주세요.");
+                }
+            } else if (searchType === "place") {
+                // 장소명으로 검색
+                if (input) {
+                    var places = new kakao.maps.services.Places();
+                    places.keywordSearch(input, function (result, status) {
+                        if (status === kakao.maps.services.Status.OK && result.length > 0) {
+                            var place = result[0];
+                            var latitude = place.y; // 위도
+                            var longitude = place.x; // 경도
+                            addMarker(latitude, longitude);
+                        } else {
+                            alert("해당하는 장소가 없습니다.");
+                        }
+                    });
+                } else {
+                    alert("검색어를 입력해주세요.");
+                }
+            }
+        });
+
+        // DB연결
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var valTable = JSON.parse(xhr.responseText);
+
+                    for (var i = 0; i < valTable.length; i++) {
+                        var latitude = valTable[i].latitude;
+                        var longitude = valTable[i].longitude;
+                        addMarker(latitude, longitude);
+                    }
+                } else {
+                    console.log("요청 실패");
+                }
+            }
+        };
+
+        xhr.open("GET", "/valTable");
+        xhr.send();
+    });
+
+    // function searchPlace(keyword) {
+    //     var places = new kakao.maps.services.Places();
+    //     places.keywordSearch(keyword, function (result, status) {
+    //         if (status === kakao.maps.services.Status.OK && result.length > 0) {
+    //             var place = result[0];
+    //             var latitude = place.y;
+    //             var longitude = place.x;
+    //             addMarker(latitude, longitude, place.place_name);
+    //         } else {
+    //             console.log("장소를 찾을 수 없음: " + keyword);
+    //         }
+    //     });
+    // }
+
+    // 텍스트 박스 스타일 설정
+    var infoWindowStyle = `
+  width: auto;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+`;
+
+    function addMarker(latitude, longitude, placeName) {
+        var markerPosition = new kakao.maps.LatLng(latitude, longitude);
+        var marker = new kakao.maps.Marker({
+            position: markerPosition,
+        });
+        marker.setMap(map);
+        markers.push(marker); // 마커를 배열에 추가
+        map.setCenter(markerPosition);
+
+        var infoWindowContent = `<div style="${infoWindowStyle}">${placeName}</div>`;
+
+        var infoWindow = new kakao.maps.InfoWindow({
+            content: infoWindowContent,
+            position: markerPosition,
+        });
+
+        // 마커에 커서를 올렸을 때 장소 이름 표시
+        kakao.maps.event.addListener(marker, 'mouseover', function() {
+            infoWindow.open(map, marker);
+        });
+
+        // 마커에 커서를 내렸을 때 장소 이름 숨김
+        kakao.maps.event.addListener(marker, 'mouseout', function() {
+            infoWindow.close();
+        });
+
+        // 마커 클릭 이벤트 처리
+        kakao.maps.event.addListener(marker, 'click', function() {
+            var index = markers.indexOf(marker);
+            if (index > -1) {
+                markers.splice(index, 1); // 마커 배열에서 제거
+                marker.setMap(null); // 지도에서 제거
+            }
+        });
+
+        // 마커 추가 시 거리 계산
+        calculateDistances(marker, placeName);
+    }
+
+    var distanceContainer = document.getElementById("distance-container"); // 결과를 출력할 컨테이너 엘리먼트
+
+    function calculateDistances(centerMarker, placeName) {
+        var centerPosition = centerMarker.getPosition();
+        var centerLat = toRadians(centerPosition.getLat());
+        var centerLon = toRadians(centerPosition.getLng());
+
+        var resultText = ""; // 결과를 저장할 변수
+        var distances = []; // 거리를 저장할 배열
+
+        for (var i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+            var markerPosition = marker.getPosition();
+            var markerLat = toRadians(markerPosition.getLat());
+            var markerLon = toRadians(markerPosition.getLng());
+
+            if (marker !== centerMarker) {
+                var distance = getDistance(centerLat, centerLon, markerLat, markerLon);
+                distances.push(distance);
+            }
+        }
+
+        // 거리를 오름차순으로 정렬
+        distances.sort(function(a, b) {
+            return a - b;
+        });
+
+        for (var i = 0; i < distances.length; i++) {
+            var distance = distances[i];
+            resultText += `중심점에서 ${placeName}까지의 거리: ${distance.toFixed(2)}m<br/>`;
+        }
+
+        distanceContainer.innerHTML += resultText; // 결과를 컨테이너에 추가
+    }
+
+    // 두 지점 사이의 거리 계산 함수 (Haversine 공식)
+    function getDistance(lat1, lon1, lat2, lon2) {
+        var dLat = lat2 - lat1;
+        var dLon = lon2 - lon1;
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1) * Math.cos(lat2) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var distance = 6371 * c * 1000; // 지구 반지름 6371km, 미터로 변환
+        return distance;
+    }
+
+    // 각도를 라디안으로 변환하는 함수
+    function toRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    }
+</script>
+
+
+</body>
+</html>
+</nav>

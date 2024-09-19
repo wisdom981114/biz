@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b0177b58384df5dde9e5816124b535f4&libraries=services"></script>
+    <title>Memori</title>
+    <link href="https://fonts.googleapis.com/css?family=Playfair&#43;Display:700,900&amp;display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+    <!-- sbb CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+    <!-- Bootstrap JS -->
+    <script th:src="@{/bootstrap.min.js}"></script>
+</head>
+<body>
+
+<!-- 네비게이션 바 -->
+<nav th:replace="~{navbar :: navbarFragment}"></nav>
+
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+        $('#region').change(function() {
+            var selectedRegion = $(this).val();
+            $.ajax({
+                url: '/getSigunguList',
+                data: {region: selectedRegion},
+                success: function(response) {
+                    var sigunguSelect = $('#sigungu');
+                    sigunguSelect.empty();
+                    $.each(response, function(index, item) {
+                        sigunguSelect.append(new Option(item, item));
+                    });
+                }
+            });
+        });
+
+        $('#clCode').change(function (){
+            var selectedClCode = $(this).val();
+            $.ajax({
+                url: '/getClCodeList',
+                data: {clCode : selectedClCode},
+                success: function (response){
+                    var nanmClCodeSelect = $('#nanmClCode');
+                    nanmClCodeSelect.empty();
+                    $.each(response,function (index,item){
+                        nanmClCodeSelect.append(new Option(item, item));
+                    });
+                }
+            })
+        });
+
+        $('form').on('submit', function(e) {
+            e.preventDefault();
+
+            var selectedRegion = $('#region').val();
+            var selectedSigungu = $('#sigungu').val();
+            var selectedClCode = $('#clCode').val(); // Corrected the variable name here
+            var selectedNanmClCode = $('#nanmClCode').val(); // Corrected the variable name here
+            // Logging selected values
+            console.log('Selected Region:', selectedRegion);
+            console.log('Selected Sigungu:', selectedSigungu);
+            console.log('Selected ClCode:', selectedClCode);
+            console.log('Selected NanmClCode:', selectedNanmClCode);
+
+            var promise1 = $.ajax({
+                url: '/search',
+                method: 'POST',
+                data: {sido: selectedRegion, sigungu: selectedSigungu, upperClCode: selectedClCode, nanmClCode: selectedNanmClCode},
+            });
+
+            promise1.then(function(response1) {
+                $('#apiResult').text(JSON.stringify(response1, null, 2));
+
+                var promise2 = $.ajax({
+                    url: '/search2',
+                    method: 'POST',
+                });
+
+                promise2.then(function(response2) {
+                    $('#apiResult2').text(JSON.stringify(response2, null, 2));
+                })
+                    .catch(function(error) {
+                        console.error("Error: ", error);
+                    });
+            })
+                .catch(function(error) {
+                    console.error("Error: ", error);
+                });
+        });
+    });
+    /*]]>*/
+</script>
+
+<div class="Select-form">
+<form>
+    </br>
+    <select id="region" name="sido">
+        <option value="">Select Region</option>
+        <option th:each="region : ${regions}" th:value="${region}" th:text="${region}"></option>
+    </select>
+
+    <select id="sigungu" name="sigungu">
+        <option value="">Select Sigungu</option>
+    </select>
+
+    <select id="clCode" name="clCode">
+        <option value="">Select ClCode</option>
+        <option th:each="clCode : ${clCodes}" th:value="${clCode}" th:text="${clCode}"></option>
+    </select>
+
+    <select id="nanmClCode" name="nanmClCode">
+        <option value="">Select NanmClCode</option>
+        <!-- NanmClCode options will be populated by jQuery -->
+    </select>
+
+    <label for="search-type"></label>
+    <select id="search-type">
+        <option value="address">도로명 주소</option>
+        <option value="coordinate">위도 및 경도</option>
+        <option value="place">장소명</option>
+    </select>
+    <label for="input">검색어 입력:</label>
+    <input type="text" id="input" />
+    <input type="submit" value="검색" id="search-btn">
+    <br/><br/>
+</form>
+</div>
+<style>.Select-form {
+    display: flex;
+    justify-content: center;
+
+}</style>
+
+<!-- 지도 -->
+<nav th:replace="~{map :: map}"></nav>
+
+
+
+
+<table>
+    <thead>
+    <tr>
+        <th>봉사제목</th>
+        <th>123</th>
+        <th>123</th>
+        <th>123</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="valTables : ${valTables}">
+        <td th:text="${valTables.progrmSj}"/>
+        <td><a href="#" th:href="@{/{progrmRegistNo}/detail (progrmRegistNo=${valTables.progrmRegistNo})}" role="button">link</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

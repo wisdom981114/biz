@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>비밀번호 변경</title>
+        <link rel="stylesheet" href="pwchange.css">
+        <script src="mypage.js"></script>
+        
+    </head>
+    <body>
+        <h1 align="center">비밀번호 변경</h1><br><br>
+
+       
+
+        <div>
+            <b class="name">PW</b><br>
+            <input class="text" type="password" name="PW" id="password1" placeholder="비밀번호"><br><br>
+        </div><br>
+        <div>
+            <b class="name">PW 변경</b><br>
+            <input class="text" type="password" name="PW" id="password2" placeholder="비밀번호 변경"><br><br>
+        
+        </div><br>
+        <div>
+            <b class="name">PW 변경확인</b><br>
+            <input class="text" type="password" name="PW" id="password3" placeholder="비밀번호 변경 확인"><br><br>
+        
+        </div><br>
+        
+        <div>
+            <button class="pwchange" onclick="change()" type="button">비밀번호 변경</button>
+            </a>
+            <br><br><br>
+
+            <div>
+
+                <button class="home" onclick="location.href='/mypage'">마이페이지</button><br><br>
+            </div>
+      
+ 
+            <script type="text/javascript">
+            function change(){
+                var p1 = document.getElementById('password1').value;
+                var p2 = document.getElementById('password2').value;
+                var p3 = document.getElementById('password3').value;
+
+               
+
+
+                if(p1.length < 6) {
+                      alert('비밀번호 입력한 글자가 6글자 이상이어야 합니다.');
+                      return false;
+                  }
+                  
+                 
+                 
+                     if( p2 != p3 ) {
+                       alert("변경한 비밀번호 불일치");
+                      return false;
+                     } else{
+                       alert("변경되었습니다.");
+                       
+                    }
+
+                
+                     
+                
+                   
+            }
+            </script>
+        </div>
+    </body>
+</html>
